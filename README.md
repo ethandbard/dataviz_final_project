@@ -21,7 +21,7 @@ In the *report* folder, two .Rmd files are present.
 
 **Sample data visualization:** 
 
-<img src="https://raw.githubusercontent.com/ethandbard/dataviz_final_project/30981640ed73586d523af9ac146fa407b1619a22/project-01/images/fuel_cost_year.svg" width="70%" height="70%" bg="white">
+<img src="https://raw.githubusercontent.com/ethandbard/dataviz_final_project/30981640ed73586d523af9ac146fa407b1619a22/project-01/images/fuel_cost_year.svg" width="70%" height="70%" background-color="white">
 
 
 ## Project 02 - Model Visualization, Interactive Plots, Spatial Maps
