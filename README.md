@@ -1,14 +1,14 @@
 # Data Visualization and Reproducible Research
 
-> Firstname Lastname. 
+> Ethan Bard 
 
-Learn more about me in my [GitHub profile page](https://github.com/reiminer)
+Learn more about me in my [GitHub profile page](https://github.com/ethandbard)
 
 
 The following is a sample of products created during the _"Data Visualization and Reproducible Research"_ course.
 
 
-## Project 01
+## Project 01 - Fuel Efficiency EDA
 
 In the `project_01/` folder you can find my submission for Data Visualization Mini Project 1 for CAP575. 
 
@@ -26,14 +26,12 @@ In the *report* folder, two .Rmd files are present.
 
 
 
-## Project 02
+## Project 02 - Model Visualization, Interactive Plots, Spatial Maps
 
-In this project, I explored ... _[short description of your revised project goes here]_ Find the code and report in the `project_02/` folder.
+This project is an analysis of two Datasets in order to practice and demonstrate visualizing a model, interactive plots, and spatial maps.
 
 **Sample data visualization:** 
-
-_[include your favorite visualization from this project here]_
-<img src="https://github.com/reisanar/dataviz_final_project/blob/main/figures/fl_higher_ed.png" width="60%" height="60%">
+<img src="https://raw.githubusercontent.com/ethandbard/dataviz_final_project/main/project-02/images/house_coefs.svg" width="60%" height="60%">
 
 (you can also place your figures in the `figures/` folder and use the `![](path_to_picture)` option to add the pictures here)
 
