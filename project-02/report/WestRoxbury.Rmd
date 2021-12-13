@@ -1,0 +1,127 @@
+---
+title: "West Roxbury Housing EDA and Analysis"
+output: html_notebook
+---
+
+```{r}
+library(tidyverse)
+library(broom)
+library(plotly)
+library(GGally)
+library(kableExtra)
+library(magick)
+library(webshot)
+webshot::install_phantomjs()
+houses <- read_csv("../data/WestRoxbury.csv")
+```
+
+```{r}
+glimpse(houses)
+```
+
+```{r}
+houses <- houses %>% 
+  mutate(FLOORS = factor(FLOORS),
+         ROOMS = factor(ROOMS),
+         BEDROOMS = factor(BEDROOMS),
+         FULL_BATH = factor(`FULL BATH`),
+         HALF_BATH = factor(`HALF BATH`),
+         KITCHEN = factor(KITCHEN),
+         FIREPLACE = factor(FIREPLACE),
+         REMODEL = factor(REMODEL),
+         TOTAL_VALUE = `TOTAL VALUE`,
+         LOT_SQFT = `LOT SQFT`,
+         GROSS_AREA = `GROSS AREA`,
+         LIVING_AREA = `LIVING AREA`,
+         YEAR = `YR BUILT`) %>% 
+  select(-c(`TOTAL VALUE`, `LOT SQFT`, `GROSS AREA`, `LIVING AREA`, `FULL BATH`, `HALF BATH`, `YR BUILT`))
+```
+
+```{r}
+glimpse(houses)
+```
+
+# EDA 
+
+```{r}
+ggplot(houses, aes(TOTAL_VALUE)) + 
+  geom_histogram(binwidth = 10, color = "black", fill = "gray") + 
+  theme_minimal() + 
+  xlab("Total Value (Thousands)") + 
+  ylab("") +
+  ggtitle("West Roxbury Housing Prices")
+
+ggsave("../images/house_prices.svg", device = "svg")
+```
+
+```{r}
+houses_smaller <- houses %>% 
+  select(TOTAL_VALUE, TAX, LOT_SQFT, YEAR, GROSS_AREA, LIVING_AREA)
+
+ggpairs(houses_smaller)
+
+ggsave("../images/house_plots.svg", device = "svg")
+```
+
+
+```{r}
+houses_smaller <- houses %>% 
+  select(TOTAL_VALUE, FLOORS, ROOMS, BEDROOMS, KITCHEN, FIREPLACE, REMODEL, FULL_BATH, HALF_BATH)
+```
+
+```{r}
+houses %>% 
+  ggplot(aes(x = REMODEL, y = TOTAL_VALUE)) +
+  geom_boxplot() + 
+  theme_minimal() +
+  ylab("Total Value (Thousands)") + 
+  xlab("") +
+  ggtitle("West Roxbury Housing Prices by Remodel Status")
+```
+
+```{r}
+house_model <- lm(TOTAL_VALUE ~ . - TAX, data = houses) # omit tax to avoid overfitting
+summary(house_model)
+```
+
+
+```{r}
+house_model <- lm(TOTAL_VALUE ~ . - TAX - ROOMS - BEDROOMS, data = houses)
+summary(house_model)
+```
+
+```{r}
+house_coefs <- tidy(house_model, conf.int = TRUE) %>% 
+  filter(term != "(Intercept)")
+
+house_coefs
+```
+
+```{r}
+glance(house_model)
+```
+
+```{r}
+knitr::kable(house_coefs, "html", caption = "Housing Price Coefficients") %>% 
+  kable_styling() %>% 
+  as_image(file = "../images/house_table.png")
+```
+
+
+
+
+```{r}
+ggplot(house_coefs,
+       aes(x = estimate, 
+           y = fct_rev(term))) +
+  geom_pointrange(aes(xmin = conf.low,
+                      xmax = conf.high)) + 
+  geom_vline(xintercept = 0,
+             color = "purple") +
+  theme_minimal() + 
+  ylab("") +
+  ggtitle("Housing Price Coefficients")
+
+ggsave("../images/house_coefs.svg", device = "svg")
+```
+

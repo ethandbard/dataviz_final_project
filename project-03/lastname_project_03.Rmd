@@ -35,6 +35,13 @@ knitr::include_graphics("https://github.com/reisanar/figs/raw/master/tpa_max_tem
 
 Hint: the option `binwidth = 3` was used with the `geom_histogram()` function.
 
+```{r}
+weather_tpa %>% 
+  group_by(month, day) %>% 
+  summarise()
+```
+
+
 (b) Recreate the plot below:
 
 ```{r, echo = FALSE, out.width="80%", fig.align='center'}
@@ -95,3 +102,87 @@ Make sure to include a copy of the dataset in the `data/` folder, and reference 
 - [FL Poly News 2019](https://github.com/reisanar/datasets/blob/master/poly_news_FL19.csv)
 
 (to get the "raw" data from any of the links listed above, simply click on the `raw` button of the GitHub page and copy the URL to be able to read it in your computer using the `read_csv()` function)
+
+```{r}
+library(tidyverse)
+library(tidytext)
+```
+
+```{r}
+top100 <- read_csv("../data/BB_top100_2015.csv")
+```
+
+```{r}
+weeknd <- top100 %>% filter(Artist == "the weeknd")
+weeknd <- weeknd %>% mutate(
+  Song = factor(Song)) 
+weeknd
+```
+
+```{r}
+weeknd_sentiment <- weeknd %>% 
+  unnest_tokens(word, Lyrics) %>%
+  group_by(Song) %>% 
+  mutate(word_count = 1:n(),
+         index = word_count %/% 25 + 1) %>% 
+  inner_join(get_sentiments("bing")) %>%
+  count(Song, index = index, sentiment) %>% 
+  pivot_wider(names_from = sentiment, values_from = n)
+
+weeknd_sentiment[is.na(weeknd_sentiment)] <- 0
+
+weeknd_sentiment <- weeknd_sentiment %>% 
+  mutate(net_sentiment = positive - negative)
+```
+
+
+```{r}
+ggplot(weeknd_sentiment, 
+       aes(x = index, y = net_sentiment, fill = net_sentiment > 0)) +
+  geom_col() +
+  guides(fill = FALSE) +
+  labs(x = NULL, y = "Net sentiment") +
+  scale_fill_manual(name = "", labels = c("Positive", "Negative"),
+                     values = c("#FF851B", "#3D9970")) +
+  facet_wrap(vars(Song), scales = "free_x") +
+  theme_minimal() +
+  labs(title = "The Weeknd Sentiment Analysis")
+```
+
+```{r}
+drake <- top100 %>% filter(Artist == "drake")
+drake <- drake %>% mutate(
+  Song = factor(Song)) 
+drake
+```
+
+```{r}
+drake_sentiment <- drake %>% 
+  unnest_tokens(word, Lyrics) %>%
+  group_by(Song) %>% 
+  mutate(word_count = 1:n(),
+         index = word_count %/% 25 + 1) %>% 
+  inner_join(get_sentiments("bing")) %>%
+  count(Song, index = index, sentiment) %>% 
+  pivot_wider(names_from = sentiment, values_from = n)
+
+drake_sentiment[is.na(drake_sentiment)] <- 0
+
+drake_sentiment <- drake_sentiment %>% 
+  mutate(net_sentiment = positive - negative)
+```
+
+
+```{r}
+ggplot(drake_sentiment, 
+       aes(x = index, y = net_sentiment, fill = net_sentiment > 0)) +
+  geom_col() +
+  guides(fill = FALSE) +
+  labs(x = NULL, y = "Net sentiment") +
+  scale_fill_manual(name = "", labels = c("Positive", "Negative"),
+                     values = c("#FF851B", "#3D9970")) +
+  facet_wrap(vars(Song), scales = "free_x") +
+  theme_minimal() +
+  labs(title = "Drake Sentiment Analysis")
+```
+

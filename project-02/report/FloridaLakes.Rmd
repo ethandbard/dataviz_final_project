@@ -1,0 +1,77 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+```{r}
+library(tidyverse)
+library(sf)
+library(plotly)
+library(RColorBrewer)
+library(data.table)
+library(tm)
+```
+
+```{r}
+lakes <- read_csv("../data/FloridaLakes.csv")
+lake_shapes <- read_sf("../data/Florida_Lakes/Florida_Lakes.shp")
+```
+
+
+```{r}
+glimpse(lakes)
+```
+```{r}
+polk_lakes <- filter(lake_shapes, COUNTY == "POLK")
+
+polk_lakes$NAME <- removeWords(polk_lakes$NAME, c("Lake ", " Lake"))
+lakes <- lakes %>% 
+  mutate(NAME = Lake)
+```
+
+```{r}
+colnames(lakes)
+polk_lake_shapes <- left_join(polk_lakes, lakes, by = "NAME") %>% 
+  filter(!is.na(ID))
+
+polk_lake_shapes
+```
+
+```{r, echo = FALSE}
+p <- ggplot(polk_lake_shapes, aes(x = AvgMercury, y = pH, color = Chlorophyll, size = Calcium)) + 
+  geom_point(aes(text = Lake)) + 
+  theme_minimal() +
+  labs(title = "Polk County Lakes") + 
+  scale_color_gradient(low = "gray", high = "DarkGreen") + 
+  ggplot2::annotate(geom = 'text',
+                    x = 0.15, y = 7,
+                    label = "Healthy Lakes") + 
+  ggplot2::annotate(geom = "segment",
+                    x = 0.15, xend = 0.15,
+                    y = 7.2, yend = 7.7,
+                    arrow = arrow(length = unit(0.1, "in")))
+
+#p <- ggplotly(p)
+p
+
+ggsave("../images/polk_lakes.svg", device = "svg")
+```
+
+
+```{r}
+p <- ggplot() + 
+  geom_sf(data = polk_lake_shapes, aes(text = NAME, fill = Chlorophyll)) + 
+  theme_minimal() + 
+  ggtitle("Polk County Lakes") + 
+  scale_fill_gradient(low = "gray", high = "DarkGreen")
+  
+
+p <- ggplotly(p)
+p
+
+save(p, file = "PolkLakes.rda")
+```
+
+
+
+

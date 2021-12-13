@@ -1,0 +1,192 @@
+---
+title: "Mini_Project_1"
+author: "Ethan Bard"
+date: "10/9/2021"
+---
+
+```{r}
+library(tidyverse)
+```
+
+```{r}
+#Read Fuel CSV from Dr. Sanchez
+fuel <- read_csv("https://raw.githubusercontent.com/reisanar/datasets/master/fuel.csv")
+```
+
+```{r}
+glimpse(fuel)
+```
+
+# Data Summary
+
+The dataset used in this exploratory analysis consists of 38113 observations of 81 features describing fuel economy data from 1984-2017 by the Environmental Protection Agency (EPA). Of the 81 features included in the dataset as provided, 8 of them contain no data at all, and several more of them contain high proportions of missing values. To avoid dealing with these incomplete features, this anlaysis will focus on the general attributes that are available for all records. The primary features being evaluated in this analysis are vehicle class, transmission type, year, fuel efficiency (mpg), and fuel cost. 
+
+## Feature Examination
+
+```{r}
+fuel %>% 
+  count(class) %>% 
+  arrange(-n)
+```
+
+```{r}
+fuel %>% 
+  count(transmission) %>% 
+  arrange(-n)
+```
+
+```{r}
+fuel %>% 
+  ggplot() +
+  geom_histogram(aes(x = combined_mpg_ft1)) + 
+  theme_minimal() + 
+  xlab("MPG") + 
+  ylab("Count") + 
+  ggtitle("Distribution of Fuel Efficiency (MPG)")
+
+ggsave("../images/fuel_efficiency.svg", device = "svg")
+```
+
+```{r}
+fuel %>% 
+  ggplot() +
+  geom_histogram(aes(x = annual_fuel_cost_ft1)) + 
+  theme_minimal() + 
+  xlab("Annual Fuel Cost") + 
+  ylab("Count") + 
+  ggtitle("Distribution of Estimated Annual Fuel Cost")
+
+ggsave("../images/fuel_cost.svg", device = "svg")
+```
+
+# Methods
+
+This dataset uses many categories in its transmission and class features. To make visualizations more effective, the categories were combined as much as possible to reduce the total number of unique categories. For example, dozens of "Transmission" categories were condensed to just "Automatic" or "Manual", and dozens of vehicle class categories were condensed to just "Car", "Truck", "Van", or "Other". This allows visualizations to describe how vehicle class and transmission interact with other attributes without overloading the viewer with information. 
+
+## Remove Features 
+
+
+```{r}
+NA_sums <- colSums(is.na(fuel))
+
+NA_sums[NA_sums > 0]
+
+#remove attributes with all null values (n = 38113)
+fuel <- fuel %>% 
+  select(-c(supercharger, fuel_type_2, start_stop_technology, 
+            electric_motor, manufacturer_code, vehicle_charger,
+            alternate_charger, range_ft2))
+```
+
+```{r}
+#create new categorical variable for year
+fuel <- fuel %>% 
+  mutate(year_group = case_when(
+    year < 1990 ~ "1980s",
+    year >= 1990 & year < 2000 ~ "1990s",
+    year >= 2000 & year < 2010 ~ "2000s",
+    year >= 2010 ~ "2010s"
+  ))
+
+fuel$year_group <- factor(fuel$year_group, levels = c("1980s", "1990s", "2000s", "2010s"))
+```
+
+```{r}
+#filter special purpose and sport utility vehicles from dataset
+fuel <- fuel %>% 
+  filter(!(class %in% c("Special Purpose Vehicle 4WD", "Special Purpose Vehicles", "Special Purpose Vehicles/4wd", "Special Purpose Vehicle 2WD", "Special Purpose Vehicles/2wd", "Special Purpose Vehicle", "Small Sport Utility Vehicle 4WD", "Standard Sport Utility Vehicle 2WD", "Sport Utility Vehicle - 4WD", "Small Sport Utility Vehicle 2WD", "Sport Utility Vehicle - 2WD", "Standard Sport Utility Vehicle 4WD"))) 
+```
+
+```{r}
+#Condense class categories
+fuel <- fuel %>% 
+  mutate(class2 = case_when(
+    class %in% c("Compact Cars", "Large Cars", "Midsize-Large Station Wagons",
+                 "Midsize Cars", "Midsize Station Wagons", "Minicompact Cars", "Small Station Wagons",
+                 "Two Seaters", "Subcompact Cars") ~ "Cars",
+    class %in% c("Minivan - 2WD", "Minivan - 4WD", "Vans", "Vans Passenger", 
+                 "Vans, Cargo Type", "Vans, Passenger Type") ~ "Vans",
+    class %in% c("Small Pickup Trucks", "Small Pickup Trucks 2WD", "Small Pickup Trucks 4WD", "Standard Pickup Trucks 2WD",
+                 "Standard Pickup Trucks 4WD", "Standard Pickup Trucks/2wd") ~ "Trucks",
+    TRUE ~ "Other"
+  ))
+
+fuel$class2 <- factor(fuel$class2, levels = c("Cars", "Vans", "Trucks", "Other"))
+```
+
+```{r}
+unique(fuel$class)
+```
+
+```{r}
+#Condense transmission to fewer categories (manual / auto)
+fuel <- fuel %>% 
+  mutate(transmission2 = case_when(
+    str_detect(transmission, "Manual") ~ "Manual",
+    str_detect(transmission, "Auto") ~ "Automatic"
+  ))
+```
+
+
+```{r}
+#Average highway/city mpg by year group per class
+fuel %>% 
+  ggplot() + 
+  geom_boxplot(aes(x = year_group, y = combined_mpg_ft1)) + 
+  theme_minimal() + 
+  theme(legend.position = "none") +
+  ggtitle("Distribution of MPG by Decade") + 
+  xlab("") + 
+  ylab('')
+
+ggsave("../images/mpg_year_class.svg", device = "svg")
+```
+
+
+```{r}
+#Average Annual Fuel Cost by Year 
+fuel %>% 
+  filter(!(class2 %in% "Other")) %>% 
+  ggplot() +
+  geom_point(aes(x = year, y = annual_fuel_cost_ft1, color = class2)) +
+  facet_wrap(~class2) + 
+  theme_minimal() + 
+  xlab("Year") +
+  ylab("") + 
+  theme(legend.position = "None") + 
+  ggtitle("Annual Fuel Cost by Vehicle Category") + 
+  scale_color_brewer(palette = "Set1")
+
+ggsave("../images/fuel_cost_year.svg", device = "svg")
+```
+
+
+
+
+```{r}
+#Prevalence of Manual/Automatic Transmissions by year
+transmission_counts <- fuel %>% 
+  filter(!(class %in% "Other")) %>% 
+  group_by(class2, year_group) %>% 
+  count(transmission2) %>% 
+  na.omit()
+
+transmission_counts
+```
+
+```{r}
+ggplot(transmission_counts) +
+  geom_col(aes(x = transmission2, y = n, fill = class2)) +
+  facet_wrap(~year_group) + 
+  theme_minimal() + 
+  xlab("") +
+  ylab("") +
+  ggtitle("Prevalence of Transmission Types by Year") +
+  scale_fill_brewer(palette = "Set1") + 
+  labs(fill = "Class")
+
+ggsave("../images/transmission_counts.svg", device = "svg")
+```
+
+
+
