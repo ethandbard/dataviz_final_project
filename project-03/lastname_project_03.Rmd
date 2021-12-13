@@ -149,6 +149,12 @@ ggplot(weeknd_sentiment,
   labs(title = "The Weeknd Sentiment Analysis")
 ```
 
+
+```{r}
+ggsave("images/weeknd_sentiment.svg", device = "svg")
+```
+
+
 ```{r}
 drake <- top100 %>% filter(Artist == "drake")
 drake <- drake %>% mutate(
@@ -184,5 +190,9 @@ ggplot(drake_sentiment,
   facet_wrap(vars(Song), scales = "free_x") +
   theme_minimal() +
   labs(title = "Drake Sentiment Analysis")
+```
+
+```{r}
+ggsave("images/drake_sentiment.svg", device = "svg")
 ```
 
