@@ -29,6 +29,7 @@ In the *report* folder, two .Rmd files are present.
 This project is an analysis of two Datasets in order to practice and demonstrate visualizing a model, interactive plots, and spatial maps.
 
 **Sample data visualization:** 
+
 <img src="https://raw.githubusercontent.com/ethandbard/dataviz_final_project/main/project-02/images/house_coefs.svg" width="60%" height="60%">
 
 ## Project 03
@@ -36,6 +37,7 @@ This project is an analysis of two Datasets in order to practice and demonstrate
 In this project, I explored the top 100 ranked billboard songs from 2015 to practice sentiment analysis. 
 
 **Sample data visualization:** 
+
 <img src="https://raw.githubusercontent.com/ethandbard/dataviz_final_project/main/project-03/images/weeknd_sentiment.svg" width="80%" height="80%">
 
 
