@@ -24,8 +24,6 @@ In the *report* folder, two .Rmd files are present.
 <img src="https://raw.githubusercontent.com/ethandbard/dataviz_final_project/30981640ed73586d523af9ac146fa407b1619a22/project-01/images/fuel_cost_year.svg" width="70%" height="70%">
 
 
-
-
 ## Project 02 - Model Visualization, Interactive Plots, Spatial Maps
 
 This project is an analysis of two Datasets in order to practice and demonstrate visualizing a model, interactive plots, and spatial maps.
@@ -33,19 +31,14 @@ This project is an analysis of two Datasets in order to practice and demonstrate
 **Sample data visualization:** 
 <img src="https://raw.githubusercontent.com/ethandbard/dataviz_final_project/main/project-02/images/house_coefs.svg" width="60%" height="60%">
 
-(you can also place your figures in the `figures/` folder and use the `![](path_to_picture)` option to add the pictures here)
-
-
 ## Project 03
 
-In this project, I explored ... _[short description of your revised project goes here]_
+In this project, I explored the top 100 ranked billboard songs from 2015 to practice sentiment analysis. 
 
 **Sample data visualization:** 
-
-_[include your favorite visualization from this project here]_
-<img src="https://github.com/reisanar/figs/raw/master/jackie_jessie_marion.png" width="80%" height="80%">
+<img src="https://raw.githubusercontent.com/ethandbard/dataviz_final_project/main/project-03/images/weeknd_sentiment.svg" width="80%" height="80%">
 
 
 ### Moving Forward
 
-_add here a short reflection on what you learned and what you plan to continue exploring in terms of data visualization, data storytelling, reproducible research, and/or related topics_
+This course has helped me to expand and practice some of the most important methods I have been learning throughout my studies. I feel much more comfortable working with some of the libraries included here such as `tidyverse`, `ggplot2`, and `tidytext` than I have felt in my initial exposure to them. My goal moving forward will be to continue to build upon the practices established in this course, and practice what I have already learned to solidify the knowledge. 
