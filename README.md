@@ -10,12 +10,18 @@ The following is a sample of products created during the _"Data Visualization an
 
 ## Project 01
 
-In the `project_01/` folder you can find... _[short description of your revised project goes here]_
+In the `project_01/` folder you can find my submission for Data Visualization Mini Project 1 for CAP575. 
+
+In the *report* folder, two .Rmd files are present.
+
+- **report.Rmd**
+- fuel_eda.Rmd
+
+**report.Rmd** contains my write up along with all important visualizations. **fuel_eda.Rmd** is the *orginal* .Rmd where I did all of the code and design. 
 
 **Sample data visualization:** 
 
-_[include your favorite visualization from this project here]_
-<img src="https://github.com/reisanar/figs/raw/master/echarts.png" width="70%" height="70%">
+<img src="https://raw.githubusercontent.com/ethandbard/dataviz_final_project/30981640ed73586d523af9ac146fa407b1619a22/project-01/images/fuel_cost_year.svg" width="70%" height="70%">
 
 
 
